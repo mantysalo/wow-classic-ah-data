@@ -55,12 +55,14 @@ jobs:
 
       - name: Setup ssh-agent
         uses: webfactory/ssh-agent@v0.5.3
-          with:
-            ssh-private-key: ${{ secrets.SSH_KEY }}
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+
+      - name: Add the host key
+        run: echo "${{ secrets.KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
 
       - name: Deploy
         run: |
           scp docker-compose.yml ${{ secrets.HOST }}:
           ssh ${{ secrets.HOST }} docker pull ghcr.io/mantysalo/wow-classic-ah-data:main
           ssh ${{ secrets.HOST }} docker-compose up --force-recreate --detach
-          

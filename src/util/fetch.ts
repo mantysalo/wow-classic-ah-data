@@ -4,5 +4,5 @@ import got from "got";
 
 export const fetch = TE.tryCatchK((url: string) => {
   console.log("fetching", url);
-  return got(url).json();
+  return got(url, { retry: { limit: 10 } }).json();
 }, E.toError);
