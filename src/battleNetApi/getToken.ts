@@ -1,7 +1,7 @@
 import { pipe } from "fp-ts/lib/function";
-import got from "got/dist/source";
+
 import { env } from "../config/env";
-import { decodeWith } from "../util";
+import { decodeWith, fetch } from "../util";
 import * as TE from "fp-ts/TaskEither";
 import * as E from "fp-ts/Either";
 import * as t from "io-ts";
@@ -12,16 +12,13 @@ const TokenResponse = t.type({
 
 export const getToken = pipe(
   env.OAUTH_CREDENTIALS,
-  TE.tryCatchK(
-    (credentials: string) =>
-      got("https://us.battle.net/oauth/token?grant_type=client_credentials", {
-        method: "POST",
-        headers: {
-          Authorization: `Basic ${credentials}`,
-        },
-      }).json(),
-    E.toError
-  ),
+  (credentials: string) =>
+    fetch("https://us.battle.net/oauth/token?grant_type=client_credentials", {
+      method: "POST",
+      headers: {
+        Authorization: `Basic ${credentials}`,
+      },
+    }),
   TE.chain(decodeWith(TokenResponse)),
   TE.map(({ access_token }) => access_token)
 );
