@@ -12,14 +12,10 @@ CREATE TABLE auction (
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
-SELECT create_hypertable('auction', 'created_at');
-
 CREATE TABLE item_market_value (
     id INTEGER PRIMARY KEY GENERATED ALWAYS AS IDENTITY,
     item_id INTEGER NOT NULL,
     market_value INTEGER NOT NULL,
     created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
-
-SELECT create_hypertable('item_market_value', 'created_at');
 
