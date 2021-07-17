@@ -25,12 +25,11 @@ const buildClassicUrl = (itemid: number) => (token: string) => {
   return `https://eu.api.blizzard.com/data/wow/item/${itemid}?namespace=static-classic1x-eu&locale=en_US&access_token=${token}`;
 };
 
-export const getItem = (itemId: number) =>
+export const getItem = (itemId: number, token: string) =>
   pipe(
-    getToken,
-    TE.map(buildItemUrl(itemId)),
-    TE.chain(fetchAndValidate(ItemApiResponse)),
-    TE.orElse(() => pipe(getToken, TE.map(buildClassicUrl(itemId)), TE.chain(fetchAndValidate(ItemApiResponse)))),
+    buildItemUrl(itemId)(token),
+    fetchAndValidate(ItemApiResponse),
+    TE.orElse(() => pipe(buildClassicUrl(itemId)(token), fetchAndValidate(ItemApiResponse))),
     TE.bindTo("apiResponse"),
     TE.bind("icon", () => getIcon(itemId)),
     TE.map(({ apiResponse, icon }) => {

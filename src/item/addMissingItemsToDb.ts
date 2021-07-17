@@ -13,7 +13,8 @@ export const addMissingItemsToDb = (
     bid: number;
     buyout: number;
     quantity: number;
-  }[]
+  }[],
+  token: string
 ): TE.TaskEither<Error, readonly null[]> => {
   const getCurrentItemIds = db.many("SELECT id FROM item", t.array(t.type({ id: t.number })));
 
@@ -30,7 +31,7 @@ export const addMissingItemsToDb = (
       );
     }),
     TE.chain((itemIds) => {
-      return TE.sequenceSeqArray(Array.from(itemIds).map((id) => insertItemWithId(id)));
+      return TE.sequenceSeqArray(Array.from(itemIds).map((id) => insertItemWithId(id, token)));
     })
   );
 };

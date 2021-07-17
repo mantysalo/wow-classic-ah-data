@@ -1,4 +1,4 @@
-import { pipe } from "fp-ts/lib/function";
+import { flow } from "fp-ts/lib/function";
 import * as t from "io-ts";
 import * as TE from "fp-ts/TaskEither";
 import { getToken } from "./getToken";
@@ -36,9 +36,4 @@ const createAuctionObjects = (response: t.TypeOf<typeof ApiResponse>) =>
     return { ...auctionWithoutItem, auction_id: id, item_id: item.id, item_rand: item.rand, item_seed: item.seed };
   });
 
-export const getAuctions = pipe(
-  getToken,
-  TE.map(buildUrl),
-  TE.chain(fetchAndValidate(ApiResponse)),
-  TE.map(createAuctionObjects)
-);
+export const getAuctions = flow(buildUrl, fetchAndValidate(ApiResponse), TE.map(createAuctionObjects));
